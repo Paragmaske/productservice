@@ -1,5 +1,5 @@
 <configuration>
-    <property name="LOG_DIR" value="C:\\Users\\maske\\Desktop\\logs"/>
+    <property name="LOG_DIR" value="/app/logs"/> <!-- Update to match the mounted volume path -->
 
     <!-- Console Appender for general application logs -->
     <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">

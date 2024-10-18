@@ -1,0 +1,36 @@
+version: '3.8'
+
+networks:
+  my-private-network:
+    external: true
+
+services:
+  product-db:
+    image: mysql:8.0.33
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: productdb
+    ports:
+      - "3307:3306"
+    volumes:
+      - product_db_data:/var/lib/mysql
+    networks:
+      - my-private-network
+
+  product-app:
+    build: .
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://product-db:3306/productdb
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: root
+    ports:
+      - "8080:8080"
+    depends_on:
+      - product-db
+    networks:
+      - my-private-network
+    volumes:
+      - C:/Users/Perennial/Desktop/logs/product:/app/logs  # Mounting the logs directory
+
+volumes:
+  product_db_data:

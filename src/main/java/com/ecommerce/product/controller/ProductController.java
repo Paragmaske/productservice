@@ -2,8 +2,7 @@ package com.ecommerce.product.controller;
 
 import com.ecommerce.product.model.ResponseModel;
 import com.ecommerce.product.model.ProductRequest;
-import com.ecommerce.product.model.ProductResponse;
-import com.ecommerce.product.model.StatusModel;
+
 import com.ecommerce.product.service.ProductService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +22,7 @@ public class ProductController {
     private ProductService productService;
 
     @PostMapping
-    public ResponseEntity<ResponseModel> addProduct(@Valid @RequestBody ProductRequest productRequest) {
+    public ResponseEntity<ResponseModel> addProduct( @RequestBody ProductRequest productRequest) {
         logger.info("Entering addProduct with productRequest: {}", productRequest.toString());
 
         ResponseModel productResponse = productService.addProduct(productRequest);
@@ -75,14 +74,14 @@ public class ProductController {
     }
 
     @PutMapping("/reduceQuantity/{id}")
-    public ResponseEntity<ProductResponse> reduceQuantity(@PathVariable("id") long productId,@RequestParam long quantity) {
-        ProductResponse productResponse = productService.reduceQuantity(productId, quantity);
+    public ResponseEntity<ResponseModel> reduceQuantity(@PathVariable("id") long productId,@RequestParam long quantity) {
+        ResponseModel productResponse = productService.reduceQuantity(productId, quantity);
         return new ResponseEntity<>(productResponse, HttpStatus.OK);
     }
 
     @PutMapping("/revertQuantity/{id}")
-    public ResponseEntity<ProductResponse> revertQuantity(@PathVariable("id") long productId,@RequestParam long quantity) {
-        ProductResponse productResponse = productService.revertQuantity(productId, quantity);
+    public ResponseEntity<ResponseModel> revertQuantity(@PathVariable("id") long productId,@RequestParam long quantity) {
+        ResponseModel productResponse = productService.revertQuantity(productId, quantity);
         return new ResponseEntity<>(productResponse, HttpStatus.OK);
     }
 

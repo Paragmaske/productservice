@@ -1,5 +1,6 @@
 package com.ecommerce.product.serviceImpl;
 
+
 import com.ecommerce.product.entity.Product;
 import com.ecommerce.product.exception.ProductAlreadyExistException;
 import com.ecommerce.product.exception.ProductServiceCustomException;
@@ -77,10 +78,8 @@ public class ProductServiceImpl implements ProductService {
             Product product = checkIfProductExists(productId);
             try
             {
-            product.setProductName(productRequest.getName());
-            product.setQuantity(productRequest.getQuantity());
-            product.setPrice(productRequest.getPrice());
-            Product updatedProduct = productRepository.save(product);
+                patchFieldstoProduct(productRequest, product);
+                Product updatedProduct = productRepository.save(product);
             logger.info("Exiting updateProduct method. Updated product: {}", updatedProduct);
 
                 return ResponseModel.builder().statusModel(StatusModel.builder().statusCode(200).statusMsg("SUCCESS").build()).responseMsg("PRODUCT UPDATED").responseModel(generateResponseFromProduct(updatedProduct)).build();
@@ -89,6 +88,18 @@ public class ProductServiceImpl implements ProductService {
         } catch (Exception e) {
             logger.error("Error occurred while updating product: {}", e.getMessage(), e);
             throw new ProductServiceCustomException("Failed to update product", "DATABASE_ERROR");
+        }
+    }
+
+    private void patchFieldstoProduct(ProductRequest productRequest, Product product) {
+        if (productRequest.getName() != null) {
+            product.setProductName(productRequest.getName());
+        }
+        if (productRequest.getPrice()!=null && productRequest.getPrice()>0)  {
+            product.setPrice(productRequest.getPrice());
+        }
+        if( productRequest.getQuantity()!=null  && productRequest.getQuantity()>0) {
+            product.setQuantity(productRequest.getQuantity());
         }
     }
 
@@ -115,15 +126,7 @@ public class ProductServiceImpl implements ProductService {
 
             Product product = checkIfProductExists(productId);
 
-            if (productRequest.getName() != null) {
-                product.setProductName(productRequest.getName());
-            }
-            if (productRequest.getPrice()!=null && productRequest.getPrice()>0)  {
-                product.setPrice(productRequest.getPrice());
-            }
-            if( productRequest.getQuantity()!=null  && productRequest.getQuantity()>0) {
-                product.setQuantity(productRequest.getQuantity());
-            }
+        patchFieldstoProduct(productRequest, product);
         try{
             Product patchedProduct = productRepository.save(product);
             logger.info("Exiting patchProduct method. Patched product: {}", patchedProduct);
@@ -138,7 +141,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public ProductResponse reduceQuantity(long productId, long quantity) {
+    public ResponseModel reduceQuantity(long productId, long quantity) {
         Product product = checkIfProductExists(productId);
 
         if(product.getQuantity()<quantity)
@@ -149,19 +152,19 @@ public class ProductServiceImpl implements ProductService {
         product.setQuantity(product.getQuantity()-quantity);
         Product updatedProduct = productRepository.save(product);
 
-        return  generateResponseFromProduct(updatedProduct);
+        return ResponseModel.builder().statusModel(StatusModel.builder().statusCode(200).statusMsg("SUCCESS").build()).responseMsg("Quantity reduced by "+quantity).responseModel(updatedProduct.getProductId()).responseModel(generateResponseFromProduct(updatedProduct)).build();
+
     }
 
     @Override
-    public ProductResponse revertQuantity(long productId, long quantity) {
+    public ResponseModel revertQuantity(long productId, long quantity) {
         Product product = checkIfProductExists(productId);
         product.setQuantity(product.getQuantity()+quantity);
         Product updatedProduct = productRepository.save(product);
-        return  generateResponseFromProduct(updatedProduct);
+        return ResponseModel.builder().statusModel(StatusModel.builder().statusCode(200).statusMsg("SUCCESS").build()).responseMsg("Quantity reduced by "+quantity).responseModel(updatedProduct.getProductId()).responseModel(generateResponseFromProduct(updatedProduct)).build();
     }
 
     private ProductResponse generateResponseFromProduct(Product product) {
-
 
         return ProductResponse.builder().productName(product.getProductName())
                 .productId(product.getProductId()).price(product.getPrice()).quantity(product.getQuantity()).build();

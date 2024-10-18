@@ -43,6 +43,7 @@ public class GlobalExceptionHandler {
                 .statusModel(StatusModel.builder().statusCode(409).statusMsg("CONFLICT").build())
                 .build(), HttpStatus.CONFLICT);
     }
+
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ResponseModel> handleValidationExceptions(MethodArgumentNotValidException ex) {
         Map<String, String> errorMessages = new HashMap<>();
