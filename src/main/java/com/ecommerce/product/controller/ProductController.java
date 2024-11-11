@@ -4,7 +4,8 @@ import com.ecommerce.product.model.ResponseModel;
 import com.ecommerce.product.model.ProductRequest;
 
 import com.ecommerce.product.service.ProductService;
-import jakarta.validation.Valid;
+import com.ecommerce.product.service.RedisService;
+import com.ecommerce.product.validation.Validator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,17 +23,19 @@ public class ProductController {
     private ProductService productService;
 
     @PostMapping
-    public ResponseEntity<ResponseModel> addProduct( @RequestBody ProductRequest productRequest) {
+    public ResponseEntity<ResponseModel> addProduct(  @RequestBody ProductRequest productRequest) {
         logger.info("Entering addProduct with productRequest: {}", productRequest.toString());
-
+        Validator.validate(productRequest);
         ResponseModel productResponse = productService.addProduct(productRequest);
+
 
         logger.info("Exiting addProduct with productResponse: {}", productResponse);
         return new ResponseEntity<>(productResponse, HttpStatus.CREATED);
     }
 
+
     @GetMapping("/{id}")
-    public ResponseEntity<ResponseModel> getProductById(@PathVariable("id") long productId) {
+    public ResponseEntity<ResponseModel> getProductById(@PathVariable("id") Long productId) {
         logger.info("Entering getProductById with productId: {}", productId);
 
         ResponseModel productResponse = productService.getProductById(productId);
@@ -42,10 +45,10 @@ public class ProductController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<ResponseModel> updateProduct(@PathVariable("id") long productId,
-                                                         @Valid @RequestBody ProductRequest productRequest) {
+    public ResponseEntity<ResponseModel> updateProduct(@PathVariable("id") Long productId,
+                                                         @RequestBody ProductRequest productRequest) {
         logger.info("Entering updateProduct with productId: {} and productRequest: {}", productId, productRequest);
-
+        Validator.validate(productRequest);
         ResponseModel updatedProduct = productService.updateProduct(productId, productRequest);
 
         logger.info("Exiting updateProduct with updatedProduct: {}", updatedProduct);
@@ -53,7 +56,7 @@ public class ProductController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<ResponseModel> deleteProduct(@PathVariable("id") long productId) {
+    public ResponseEntity<ResponseModel> deleteProduct(@PathVariable("id") Long productId) {
         logger.info("Entering deleteProduct with productId: {}", productId);
 
         ResponseModel deletedProduct = productService.deleteProduct(productId);
@@ -63,7 +66,7 @@ public class ProductController {
     }
 
     @PatchMapping("/{id}")
-    public ResponseEntity<ResponseModel> patchProduct(@PathVariable("id") long productId,
+    public ResponseEntity<ResponseModel> patchProduct(@PathVariable("id") Long productId,
                                                         @RequestBody ProductRequest productRequest) {
         logger.info("Entering patchProduct with productId: {} and productRequest: {}", productId, productRequest);
 
@@ -74,13 +77,13 @@ public class ProductController {
     }
 
     @PutMapping("/reduceQuantity/{id}")
-    public ResponseEntity<ResponseModel> reduceQuantity(@PathVariable("id") long productId,@RequestParam long quantity) {
+    public ResponseEntity<ResponseModel> reduceQuantity(@PathVariable("id") Long productId,@RequestParam long quantity) {
         ResponseModel productResponse = productService.reduceQuantity(productId, quantity);
         return new ResponseEntity<>(productResponse, HttpStatus.OK);
     }
 
     @PutMapping("/revertQuantity/{id}")
-    public ResponseEntity<ResponseModel> revertQuantity(@PathVariable("id") long productId,@RequestParam long quantity) {
+    public ResponseEntity<ResponseModel> revertQuantity(@PathVariable("id") Long productId,@RequestParam long quantity) {
         ResponseModel productResponse = productService.revertQuantity(productId, quantity);
         return new ResponseEntity<>(productResponse, HttpStatus.OK);
     }

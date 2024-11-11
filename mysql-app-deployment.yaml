@@ -1,0 +1,34 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: product-mysql
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: productMysql
+  template:
+    metadata:
+      labels:
+        app: productMysql
+    spec:
+      containers:
+        - name: productmysql
+          image: mysql:8.0.33
+          ports:
+            - containerPort: 3306
+          env:
+            - name: MYSQL_ROOT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: product-service-secret
+                  key: SPRING_DATASOURCE_PASSWORD  # Uses the secret for MySQL password
+            - name: MYSQL_DATABASE
+              value: productdb  # Default DB created on startup
+          volumeMounts:
+            - mountPath: /var/lib/mysql
+              name: product-storage
+      volumes:
+        - name: product-storage
+          persistentVolumeClaim:
+            claimName: mysql-product-claim

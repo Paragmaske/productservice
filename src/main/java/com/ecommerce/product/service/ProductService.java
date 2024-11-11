@@ -11,15 +11,15 @@ public interface ProductService {
      ResponseModel addProduct(ProductRequest productRequest);
 
 
-    ResponseModel getProductById(long productId);
+    ResponseModel getProductById(Long productId);
 
-    ResponseModel updateProduct(long productId, @Valid ProductRequest productRequest);
+    ResponseModel updateProduct(Long productId, ProductRequest productRequest);
 
-    ResponseModel deleteProduct(long productId);
+    ResponseModel deleteProduct(Long productId);
 
-    ResponseModel patchProduct(long productId, ProductRequest productRequest);
+    ResponseModel patchProduct(Long productId, ProductRequest productRequest);
 
-    ResponseModel reduceQuantity(long productId, long quantity);
+    ResponseModel reduceQuantity(Long productId, Long quantity);
 
-    ResponseModel revertQuantity(long productId, long quantity);
+    ResponseModel revertQuantity(Long productId, Long quantity);
 }

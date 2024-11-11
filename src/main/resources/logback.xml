@@ -1,7 +1,6 @@
 <configuration>
-    <property name="LOG_DIR" value="/app/logs"/> <!-- Update to match the mounted volume path -->
-
-    <!-- Console Appender for general application logs -->
+    <!--  <property name="LOG_DIR" value="/app/logs"/>  --><!-- Update to match the mounted volume path -->
+    <property name="LOG_DIR" value="C:/Users/Perennial/Desktop/logs/product"/>    <!-- Console Appender for general application logs -->
     <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
             <pattern>%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n</pattern>

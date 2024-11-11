@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: product-service
+  labels:
+    app: product-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: product-service  # Matches pod template labels
+  template:
+    metadata:
+      labels:
+        app: product-service  # Matches selector labels
+    spec:
+      containers:
+        - name: product-service-app  # Keeping it lowercase is good practice
+          image: paragdocker2024/productkube
+          ports:
+            - containerPort: 8080  # Should match the port in application properties
+          env:
+            - name: SPRING_DATASOURCE_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: product-service-config
+                  key: SPRING_DATASOURCE_URL
+            - name: SPRING_DATASOURCE_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: product-service-secret
+                  key: SPRING_DATASOURCE_USERNAME
+            - name: SPRING_DATASOURCE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: product-service-secret
+                  key: SPRING_DATASOURCE_PASSWORD
